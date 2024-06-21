@@ -1,5 +1,6 @@
 package com.teamsparta.todorevision.domain.member.model
 
+import com.teamsparta.todorevision.domain.member.dto.response.MemberResponse
 import jakarta.persistence.*
 
 @Entity
@@ -26,6 +27,13 @@ class Member(
     fun getPassword() : String = password
     fun getId() : Long? = id
 
+    fun toResponse() : MemberResponse {
+        return MemberResponse(
+            memberId = id!!,
+            account = email,
+            nickname = profile.nickname
+        )
+    }
 }
 
 
