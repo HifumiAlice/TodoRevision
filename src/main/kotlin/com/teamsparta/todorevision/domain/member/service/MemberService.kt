@@ -35,13 +35,15 @@ class MemberService(
 
         if (nickname.length in 3..10) {
             nickname.forEach {
-                if (it !in 'a'..'z' || it !in 'A'..'Z' || it !in '0'..'9')
+                if (it !in 'a'..'z' && it !in 'A'..'Z' && it !in '0'..'9')
                     throw IllegalArgumentException("닉네임 에러")
             }
         }
 
-        if (memberRepository.existsByEmail(nickname) || memberRepository.existsByProfile(Profile(nickname)))
-            throw IllegalArgumentException("이메일 또는 닉네임이 이미 존재합니다.")
+        if (memberRepository.existsByEmail(email))
+            throw IllegalArgumentException("이메일이 이미 존재합니다.")
+        else if (memberRepository.existsByProfile(Profile(nickname)))
+            throw IllegalArgumentException("닉네임이 이미 존재합니다.")
     }
 
 

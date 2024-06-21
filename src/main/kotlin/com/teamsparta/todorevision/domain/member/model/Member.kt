@@ -4,7 +4,7 @@ import com.teamsparta.todorevision.domain.member.dto.response.MemberResponse
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "todo")
+@Table(name = "member")
 class Member(
     @Column(name = "email", nullable = false)
     private var email: String,
