@@ -31,17 +31,17 @@ class TodoController(
 
     @PutMapping("/{id}")
     fun updateTodo(@PathVariable(value = "id") todoId: Long, request: TodoUpdateRequest): ResponseEntity<TodoResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(request))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request))
     }
 
     @PatchMapping("/{id}")
     fun updateTodoDone(@PathVariable(value = "id") todoId: Long, done: Boolean): ResponseEntity<TodoResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(done))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, done))
     }
 
     @DeleteMapping("/{id}")
     fun deleteTodo(@PathVariable(value = "id") todoId: Long): ResponseEntity<Unit> {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo())
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId))
     }
 
 }

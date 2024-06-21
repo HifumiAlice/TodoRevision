@@ -35,6 +35,7 @@ class TodoService(
     }
 
     fun getTodos(): List<TodoResponse> {
+        // TODO 검색기능 나중에 추가하기
         return todoRepository.findAll().map { it.toResponse() }
     }
 
