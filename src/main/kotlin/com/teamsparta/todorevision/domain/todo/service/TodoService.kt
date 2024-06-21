@@ -2,6 +2,7 @@ package com.teamsparta.todorevision.domain.todo.service
 
 import com.teamsparta.todorevision.domain.member.repository.MemberRepository
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoCreateRequest
+import com.teamsparta.todorevision.domain.todo.dto.request.TodoUpdateRequest
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
 import com.teamsparta.todorevision.domain.todo.model.Todo
 import com.teamsparta.todorevision.domain.todo.repository.TodoRepository
@@ -17,6 +18,7 @@ class TodoService(
 ) {
 
     fun createTodo(request: TodoCreateRequest): TodoResponse {
+        // TODO 인증된 사용자만 가능
         checkTitleAndContent(request.title, request.content)
 
         return todoRepository.save(
@@ -28,24 +30,34 @@ class TodoService(
         ).toResponse()
     }
 
-    fun getTodoById(todoId: Long) : TodoResponse {
-        TODO()
+    fun getTodoById(todoId: Long): TodoResponse {
+        return todoRepository.findByIdOrNull(todoId)?.toResponse() ?: throw IllegalArgumentException("todo가 존재하지 않습니다.")
     }
 
-    fun getTodos() : List<TodoResponse> {
-        TODO()
+    fun getTodos(): List<TodoResponse> {
+        return todoRepository.findAll().map { it.toResponse() }
     }
 
-    fun updateTodo() : TodoResponse {
-        TODO()
+    fun updateTodo(todoId: Long, request: TodoUpdateRequest): TodoResponse {
+
+        // TODO 인증 인가 완료 시 자기것만 처리 가능
+        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다.")
+
+        checkTitleAndContent(request.title, request.content)
+
+        return todoRepository.save(todo.updateTitleAndContent(request.title, request.content)).toResponse()
     }
 
-    fun updateTodoDone() : TodoResponse {
-        TODO()
+    fun updateTodoDone(todoId: Long, done: Boolean): TodoResponse {
+        // TODO 인증 인가 완료 시 자기것만 처리 가능
+        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다.")
+        return todoRepository.save(todo.updateDone(done)).toResponse()
     }
 
-    fun deleteTodo() : Unit {
-        TODO()
+    fun deleteTodo(todoId: Long): Unit {
+        // TODO 인증 인가 완료 시 자기것만 처리 가능
+        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다.")
+        todoRepository.delete(todo)
     }
 
     private fun checkTitleAndContent(title: String, content: String) {

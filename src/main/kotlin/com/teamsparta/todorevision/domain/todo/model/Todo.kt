@@ -48,4 +48,21 @@ class Todo(
         )
 
     }
+
+    fun updateTitleAndContent(title: String, content: String): Todo {
+        this.title = title
+        this.content = content
+        return this
+    }
+
+    fun updateDone(done: Boolean): Todo {
+        if (done) {
+            if(this.done == done) throw IllegalArgumentException("이미 완료된 할 일입니다.")
+            this.done = done
+        } else {
+            if(this.done == done) throw IllegalArgumentException("아직 해야 할 일입니다.")
+            this.done = done
+        }
+        return this
+    }
 }

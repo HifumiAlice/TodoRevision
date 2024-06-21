@@ -21,27 +21,27 @@ class TodoController(
 
     @GetMapping()
     fun getTodos(): ResponseEntity<List<TodoResponse>> {
-        TODO()
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodos())
     }
 
     @GetMapping("/{id}")
     fun getTodoById(@PathVariable(value = "id") todoId: Long): ResponseEntity<TodoResponse> {
-        TODO()
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId))
     }
 
     @PutMapping("/{id}")
     fun updateTodo(@PathVariable(value = "id") todoId: Long, request: TodoUpdateRequest): ResponseEntity<TodoResponse> {
-        TODO()
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(request))
     }
 
     @PatchMapping("/{id}")
     fun updateTodoDone(@PathVariable(value = "id") todoId: Long, done: Boolean): ResponseEntity<TodoResponse> {
-        TODO()
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(done))
     }
 
     @DeleteMapping("/{id}")
     fun deleteTodo(@PathVariable(value = "id") todoId: Long): ResponseEntity<Unit> {
-        TODO()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo())
     }
 
 }
