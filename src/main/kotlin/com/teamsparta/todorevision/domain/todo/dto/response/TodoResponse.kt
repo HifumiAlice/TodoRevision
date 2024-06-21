@@ -1,4 +1,4 @@
-package com.teamsparta.todorevision.domain.todo.dto
+package com.teamsparta.todorevision.domain.todo.dto.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime

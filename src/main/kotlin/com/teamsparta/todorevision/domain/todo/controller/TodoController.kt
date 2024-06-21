@@ -1,8 +1,8 @@
 package com.teamsparta.todorevision.domain.todo.controller
 
-import com.teamsparta.todorevision.domain.todo.dto.TodoCreateRequest
-import com.teamsparta.todorevision.domain.todo.dto.TodoResponse
-import com.teamsparta.todorevision.domain.todo.dto.TodoUpdateRequest
+import com.teamsparta.todorevision.domain.todo.dto.request.TodoCreateRequest
+import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
+import com.teamsparta.todorevision.domain.todo.dto.request.TodoUpdateRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
