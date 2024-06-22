@@ -15,8 +15,13 @@ class TodoController(
 ) {
 
     @PostMapping()
-    fun createTodo(@RequestBody request: TodoCreateRequest): ResponseEntity<TodoResponse> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(todoService.createTodo(request))
+    fun createTodo(
+        @RequestBody request: TodoCreateRequest,
+        @RequestParam(name = "memberId") memberId: Long
+    ): ResponseEntity<TodoResponse> {
+        // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(todoService.createTodo(request, memberId))
     }
 
     @GetMapping()
@@ -30,18 +35,37 @@ class TodoController(
     }
 
     @PutMapping("/{id}")
-    fun updateTodo(@PathVariable(value = "id") todoId: Long, request: TodoUpdateRequest): ResponseEntity<TodoResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request))
+    fun updateTodo(
+        @PathVariable(value = "id") todoId: Long,
+        request: TodoUpdateRequest,
+        @RequestParam(name = "memberId") memberId: Long
+    ): ResponseEntity<TodoResponse> {
+        // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
+        return try{
+            ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request, memberId))
+        } catch(e: IllegalStateException){
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+
     }
 
     @PatchMapping("/{id}")
-    fun updateTodoDone(@PathVariable(value = "id") todoId: Long, done: Boolean): ResponseEntity<TodoResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, done))
+    fun updateTodoDone(
+        @PathVariable(value = "id") todoId: Long,
+        @RequestParam(name = "done") done: Boolean,
+        @RequestParam(name = "memberId") memberId: Long
+    ): ResponseEntity<TodoResponse> {
+        // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, done, memberId))
     }
 
     @DeleteMapping("/{id}")
-    fun deleteTodo(@PathVariable(value = "id") todoId: Long): ResponseEntity<Unit> {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId))
+    fun deleteTodo(
+        @PathVariable(value = "id") todoId: Long,
+        @RequestParam(name = "memberId") memberId: Long
+    ): ResponseEntity<Unit> {
+        // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId, memberId))
     }
 
 }
