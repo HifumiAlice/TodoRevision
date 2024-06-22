@@ -52,11 +52,10 @@ class TodoController(
     @PatchMapping("/{id}")
     fun updateTodoDone(
         @PathVariable(value = "id") todoId: Long,
-        @RequestParam(name = "done") done: Boolean,
         @RequestParam(name = "memberId") memberId: Long
     ): ResponseEntity<TodoResponse> {
         // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, done, memberId))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, memberId))
     }
 
     @DeleteMapping("/{id}")

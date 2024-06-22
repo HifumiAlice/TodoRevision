@@ -60,15 +60,9 @@ class Todo(
         this.content = content
         return this
     }
-    // TODO 이런 로직을 가질건지
-    fun updateDone(done: Boolean): Todo {
-        if (done) {
-            if(this.done == done) throw IllegalArgumentException("이미 완료된 할 일입니다.")
-            this.done = done
-        } else {
-            if(this.done == done) throw IllegalArgumentException("아직 해야 할 일입니다.")
-            this.done = done
-        }
+
+    fun updateDone(): Todo {
+        done = !done
         return this
     }
 

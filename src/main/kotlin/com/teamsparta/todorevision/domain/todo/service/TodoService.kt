@@ -69,7 +69,7 @@ class TodoService(
         return todoRepository.save(todo.updateTitleAndContent(request.title, request.content)).toResponse()
     }
 
-    fun updateTodoDone(todoId: Long, done: Boolean, memberId: Long): TodoResponse {
+    fun updateTodoDone(todoId: Long, memberId: Long): TodoResponse {
         // TODO 인증 인가 완료 시 자기것만 처리 가능
         // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
 
@@ -81,7 +81,7 @@ class TodoService(
             throw IllegalArgumentException("자기 Todo가 아닙니다. 수정이 불가능합니다.")
         }
 
-        todo.updateDone(done)
+        todo.updateDone()
 
         todoRepository.save(todo)
 
