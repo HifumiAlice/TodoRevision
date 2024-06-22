@@ -14,24 +14,33 @@ class MemberService(
 
     fun signup(request: MemberSignupRequest): MemberResponse {
 
-        checkSignupRequest(request.email, request.nickname, request.password, request.passwordConfirmation)
-        return memberRepository.save(
-            Member(
-                email = request.email,
-                profile = Profile(
-                    nickname = request.nickname,
-                ),
-                password = request.password
-            )
-        ).toResponse()
+        validateSignupRequest(request.email, request.nickname, request.password, request.passwordConfirmation)
+
+        val member: Member = Member(
+            email = request.email,
+            profile = Profile(
+                nickname = request.nickname,
+            ),
+            password = request.password
+        )
+
+        memberRepository.save(member)
+
+        return member.toResponse()
     }
 
-    private fun checkSignupRequest(email: String, nickname: String, pw1: String, pw2: String) {
+    private fun validateSignupRequest(email: String, nickname: String, pw1: String, pw2: String) {
 
         if (pw1.length in 4..15) {
-            if (nickname in pw1) throw IllegalArgumentException("비밀번호 안에 닉네임이 포함될 수 없습니다.")
-            if (pw1 != pw2) throw IllegalArgumentException("비밀번호를 확인해주세요")
-        } else throw IllegalArgumentException("비밀번호가 너무 짧거나 깁니다.\n4자리 이상 15자리 이하로 입력해주세요")
+            if (nickname in pw1) {
+                throw IllegalArgumentException("비밀번호 안에 닉네임이 포함될 수 없습니다.")
+            }
+            if (pw1 != pw2) {
+                throw IllegalArgumentException("비밀번호를 확인해주세요")
+            }
+        } else {
+            throw IllegalArgumentException("비밀번호가 너무 짧거나 깁니다.\n4자리 이상 15자리 이하로 입력해주세요")
+        }
 
         if (nickname.length in 3..10) {
             nickname.forEach {
@@ -40,10 +49,11 @@ class MemberService(
             }
         }
 
-        if (memberRepository.existsByEmail(email))
+        if (memberRepository.existsByEmail(email)) {
             throw IllegalArgumentException("이메일이 이미 존재합니다.")
-        else if (memberRepository.existsByProfile(Profile(nickname)))
+        } else if (memberRepository.existsByProfile(Profile(nickname))) {
             throw IllegalArgumentException("닉네임이 이미 존재합니다.")
+        }
     }
 
 
