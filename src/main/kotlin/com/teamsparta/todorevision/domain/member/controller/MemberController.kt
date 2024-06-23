@@ -1,6 +1,8 @@
 package com.teamsparta.todorevision.domain.member.controller
 
+import com.teamsparta.todorevision.domain.member.dto.request.MemberLoginRequest
 import com.teamsparta.todorevision.domain.member.dto.request.MemberSignupRequest
+import com.teamsparta.todorevision.domain.member.dto.response.LoginResponse
 import com.teamsparta.todorevision.domain.member.dto.response.MemberResponse
 import com.teamsparta.todorevision.domain.member.service.MemberService
 import org.springframework.http.HttpStatus
@@ -22,5 +24,12 @@ class MemberController(
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(memberService.signup(request))
+    }
+
+    @PostMapping("/login")
+    fun login(@RequestBody request: MemberLoginRequest) : ResponseEntity<LoginResponse> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(memberService.login(request))
     }
 }

@@ -1,4 +1,5 @@
 package com.teamsparta.todorevision.domain.member.dto.response
 
-class LoginResponse {
-}
+data class LoginResponse (
+    val accessToken: String
+)

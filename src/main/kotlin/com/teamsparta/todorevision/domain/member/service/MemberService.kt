@@ -1,15 +1,19 @@
 package com.teamsparta.todorevision.domain.member.service
 
+import com.teamsparta.todorevision.domain.member.dto.request.MemberLoginRequest
 import com.teamsparta.todorevision.domain.member.dto.request.MemberSignupRequest
+import com.teamsparta.todorevision.domain.member.dto.response.LoginResponse
 import com.teamsparta.todorevision.domain.member.dto.response.MemberResponse
 import com.teamsparta.todorevision.domain.member.model.Member
 import com.teamsparta.todorevision.domain.member.model.Profile
 import com.teamsparta.todorevision.domain.member.repository.MemberRepository
+import com.teamsparta.todorevision.infra.security.JwtService
 import org.springframework.stereotype.Service
 
 @Service
 class MemberService(
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val jwtService: JwtService
 ) {
 
     fun signup(request: MemberSignupRequest): MemberResponse {
@@ -54,6 +58,24 @@ class MemberService(
         } else if (memberRepository.existsByProfile(Profile(nickname))) {
             throw IllegalArgumentException("닉네임이 이미 존재합니다.")
         }
+    }
+
+    fun login(request: MemberLoginRequest): LoginResponse {
+        val member: Member =
+            memberRepository.findByEmail(request.email) ?: throw IllegalArgumentException("존재하지 않는 이메일입니다.")
+
+        if (member.getPassword() != request.password) {
+            throw IllegalArgumentException("비밀번호가 틀립니다.")
+        }
+
+        val id =member.getId()!!
+        val email = member.getEmail()
+        val nickname = member.getProfile().getNickname()
+        val role = member.getRole()
+
+        val accessToken = jwtService.generateToken(id, email, nickname, role)
+
+        return LoginResponse(accessToken)
     }
 
 
