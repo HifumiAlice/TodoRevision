@@ -6,5 +6,8 @@ import jakarta.persistence.Embeddable
 @Embeddable
 class Profile (
     @Column(name = "nickname", nullable = false)
-    var nickname: String
-)
+    private var nickname: String
+) {
+    fun getNickname(): String = nickname
+}
+
