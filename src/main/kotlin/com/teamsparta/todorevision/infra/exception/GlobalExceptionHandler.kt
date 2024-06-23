@@ -17,6 +17,6 @@ class GlobalExceptionHandler {
     
     @ExceptionHandler(SQLException::class)
     fun handleSQLException(e: SQLException): ResponseEntity<ErrorResponse> {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse("아니 왜 발생하냐고 ㅡㅡ"))
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse("아니 왜 발생하냐고 ㅡㅡ\n${e.message}"))
     }
 }
