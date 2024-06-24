@@ -8,7 +8,6 @@ import org.aspectj.lang.annotation.Before
 import org.aspectj.lang.annotation.Pointcut
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.RequestHeader
 
 @Aspect
 @Component
@@ -20,30 +19,36 @@ class MemberPrincipalAspect(
     private fun cut() {}
 
     @Before("@annotation(com.teamsparta.todorevision.infra.aop.MemberPrincipal)")
-    fun before(joinPoint: JoinPoint,
-               headers: HttpHeaders) {
-        val args = joinPoint.args
+    fun before(joinPoint: JoinPoint) {
+        val args : Array<Any> = joinPoint.args
+
+        var header : HttpHeaders = HttpHeaders()
+        var memberDetails: MemberDetails = MemberDetails()
 
         for (data in args) {
             if (data is HttpHeaders) {
-                println("오 찾았다!")
-                val token = data["Authorization"]?.get(0) ?: throw IllegalArgumentException("헤더에 토큰 없음")
-
-                if ("Bearer " != token.slice(IntRange(0, 6))) {
-                    throw IllegalArgumentException("토큰 형식이 이상함 Beare이 없음")
-                } else {
-                    try {
-                        val test = jwtService.validateToken(token.substring("Bearer ".length))
-                        var memberId = args[1] as Long
-                        println(memberId)
-                        memberId = test.payload.subject.toLong()
-                        println(memberId)
-                    } catch (e: SignatureException) {
-                        throw IllegalArgumentException("토큰이 유효하지 않음")
-                    }
-                }
-                println()
+                header = data
+            }
+            if (data is MemberDetails) {
+                memberDetails = data
             }
         }
+
+        val token = header["Authorization"]?.get(0) ?: throw IllegalArgumentException("헤더에 토큰 없음")
+
+        if ("Bearer " != token.slice(IntRange(0, 6))) {
+            throw IllegalArgumentException("토큰 형식이 이상함 Beare이 없음")
+        } else {
+            try {
+                val test = jwtService.validateToken(token.substring("Bearer ".length))
+                memberDetails.id = test.payload.subject.toLong()
+                memberDetails.email = test.payload["email", String::class.java]
+                memberDetails.role = test.payload["role", String::class.java]
+            } catch (e: SignatureException) {
+                throw IllegalArgumentException("토큰이 유효하지 않음")
+            }
+        }
+
     }
 }
+
