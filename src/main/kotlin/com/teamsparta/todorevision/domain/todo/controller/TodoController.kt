@@ -26,10 +26,6 @@ class TodoController(
         @RequestHeader headers: HttpHeaders,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
     ): ResponseEntity<TodoResponse> {
-
-        if (memberDetails.id == null) {
-            throw IllegalArgumentException("인증/인가 안됨")
-        }
         return ResponseEntity.status(HttpStatus.CREATED).body(todoService.createTodo(request, memberDetails.id!!))
     }
 
@@ -50,17 +46,7 @@ class TodoController(
         @RequestBody request: TodoUpdateRequest,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
     ): ResponseEntity<TodoResponse> {
-
-        if (memberDetails.id == null) {
-            throw IllegalArgumentException("인증/인가 안됨")
-        }
-
-        return try{
-            ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request, memberDetails.id!!))
-        } catch(e: IllegalStateException){
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-        }
-
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request, memberDetails.id!!))
     }
 
     @MemberPrincipal("USER")
@@ -69,11 +55,6 @@ class TodoController(
         @PathVariable(value = "id") todoId: Long,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
     ): ResponseEntity<TodoResponse> {
-
-        if (memberDetails.id == null) {
-            throw IllegalArgumentException("인증/인가 안됨")
-        }
-
         return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, memberDetails.id!!))
     }
 
@@ -83,11 +64,6 @@ class TodoController(
         @PathVariable(value = "id") todoId: Long,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
     ): ResponseEntity<Unit> {
-
-        if (memberDetails.id == null) {
-            throw IllegalArgumentException("인증/인가 안됨")
-        }
-
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId, memberDetails.id!!))
     }
 
