@@ -3,6 +3,7 @@ package com.teamsparta.todorevision.domain.todo.controller
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoCreateRequest
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoUpdateRequest
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
+import com.teamsparta.todorevision.domain.todo.dto.response.TodoWithCommentsResponse
 import com.teamsparta.todorevision.domain.todo.service.TodoService
 import com.teamsparta.todorevision.infra.aop.MemberDetails
 import com.teamsparta.todorevision.infra.aop.MemberPrincipal
@@ -38,7 +39,7 @@ class TodoController(
     }
 
     @GetMapping("/{id}")
-    fun getTodoById(@PathVariable(value = "id") todoId: Long): ResponseEntity<TodoResponse> {
+    fun getTodoById(@PathVariable(value = "id") todoId: Long): ResponseEntity<TodoWithCommentsResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId))
     }
 

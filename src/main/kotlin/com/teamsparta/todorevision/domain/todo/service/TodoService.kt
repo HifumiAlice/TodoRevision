@@ -5,6 +5,7 @@ import com.teamsparta.todorevision.domain.member.repository.MemberRepository
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoCreateRequest
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoUpdateRequest
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
+import com.teamsparta.todorevision.domain.todo.dto.response.TodoWithCommentsResponse
 import com.teamsparta.todorevision.domain.todo.model.Todo
 import com.teamsparta.todorevision.domain.todo.repository.TodoRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -37,8 +38,8 @@ class TodoService(
     }
 
     @Transactional(readOnly = true)
-    fun getTodoById(todoId: Long): TodoResponse {
-        return todoRepository.findByIdOrNull(todoId)?.toResponse() ?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
+    fun getTodoById(todoId: Long): TodoWithCommentsResponse {
+        return todoRepository.findByIdOrNull(todoId)?.toWithCommentsResponse() ?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
     }
 
     @Transactional(readOnly = true)
