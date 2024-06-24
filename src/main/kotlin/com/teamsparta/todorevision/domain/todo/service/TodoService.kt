@@ -24,7 +24,7 @@ class TodoService(
         checkTitleAndContent(request.title, request.content)
 
         val member: Member =
-            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다.")
+            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다. ${memberId}")
         val todo: Todo = Todo(
             title = request.title,
             content = request.content,
@@ -38,7 +38,7 @@ class TodoService(
 
     @Transactional(readOnly = true)
     fun getTodoById(todoId: Long): TodoResponse {
-        return todoRepository.findByIdOrNull(todoId)?.toResponse() ?: throw IllegalArgumentException("todo가 존재하지 않습니다.")
+        return todoRepository.findByIdOrNull(todoId)?.toResponse() ?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
     }
 
     @Transactional(readOnly = true)
@@ -52,9 +52,9 @@ class TodoService(
         // TODO 인증 인가 완료 시 자기것만 처리 가능
         // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
 
-        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다.")
+        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
         val member: Member =
-            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다.")
+            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다. ${memberId}")
 
         if (todo.getMember().getId() != member.getId()) {
             throw IllegalStateException("자기 Todo가 아닙니다. 수정이 불가능합니다.")
@@ -73,9 +73,9 @@ class TodoService(
         // TODO 인증 인가 완료 시 자기것만 처리 가능
         // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
 
-        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다.")
+        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
         val member: Member =
-            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다.")
+            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다. ${memberId}")
 
         if (todo.getMember().getId() != member.getId()) {
             throw IllegalArgumentException("자기 Todo가 아닙니다. 수정이 불가능합니다.")
@@ -91,9 +91,9 @@ class TodoService(
     fun deleteTodo(todoId: Long, memberId: Long): Unit {
         // TODO 인증 인가 완료 시 자기것만 처리 가능
         // TODO: 나중에 memberId 제외하고 헤더에서 jwt를 통해서 값 받기
-        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다.")
+        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
         val member: Member =
-            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다.")
+            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다. ${memberId}")
 
         if (todo.getMember().getId() != member.getId()) {
             throw IllegalArgumentException("자기 Todo가 아닙니다. 삭제가 불가능합니다.")
