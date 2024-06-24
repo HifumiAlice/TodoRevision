@@ -7,6 +7,7 @@ import com.teamsparta.todorevision.domain.comment.service.CommentService
 import com.teamsparta.todorevision.infra.aop.MemberDetails
 import com.teamsparta.todorevision.infra.aop.MemberPrincipal
 import io.swagger.v3.oas.annotations.Parameter
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,13 +22,10 @@ class CommentController(
     @PostMapping("/{todoId}")
     fun createComment(
         @PathVariable todoId: Long,
+        @RequestHeader headers: HttpHeaders,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails,
         @RequestBody request: CommentCreateRequest
     ): ResponseEntity<CommentResponse> {
-
-        if (memberDetails.id == null) {
-            throw IllegalArgumentException("인증/인가 안됨")
-        }
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -38,13 +36,10 @@ class CommentController(
     @PutMapping("/{commentId}")
     fun updateComment(
         @PathVariable commentId: Long,
+        @RequestHeader headers: HttpHeaders,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails,
         @RequestBody request: CommentUpdateRequest
     ): ResponseEntity<CommentResponse> {
-
-        if (memberDetails.id == null) {
-            throw IllegalArgumentException("인증/인가 안됨")
-        }
 
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -55,12 +50,9 @@ class CommentController(
     @DeleteMapping("/{commentId}")
     fun deleteComment(
         @PathVariable commentId: Long,
+        @RequestHeader headers: HttpHeaders,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails,
     ): ResponseEntity<Unit> {
-
-        if (memberDetails.id == null) {
-            throw IllegalArgumentException("인증/인가 안됨")
-        }
 
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)

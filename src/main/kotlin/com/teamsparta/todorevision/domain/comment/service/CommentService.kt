@@ -1,6 +1,5 @@
 package com.teamsparta.todorevision.domain.comment.service
 
-import com.sun.nio.sctp.IllegalReceiveException
 import com.teamsparta.todorevision.domain.comment.dto.request.CommentCreateRequest
 import com.teamsparta.todorevision.domain.comment.dto.request.CommentUpdateRequest
 import com.teamsparta.todorevision.domain.comment.dto.response.CommentResponse
@@ -40,13 +39,8 @@ class CommentService(
     }
 
     fun updateComment(commentId: Long, request: CommentUpdateRequest, memberId: Long): CommentResponse {
-        val comment : Comment = commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("댓글이 없습니다.")
-        val member : Member = memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 없습니다.")
 
-        if (comment.getMember().getId() != member.getId()){
-            throw IllegalArgumentException("내가 작성한 댓글이 아닙니다. 수정이 불가능합니다.")
-        }
-
+        val comment: Comment = validOwnComment(commentId, memberId)
         comment.updateContent(request.content)
 
         commentRepository.save(comment)
@@ -56,14 +50,21 @@ class CommentService(
     }
 
     fun deleteComment(commentId: Long, memberId: Long): Unit {
-        val comment : Comment = commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("댓글이 없습니다.")
-        val member : Member = memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 없습니다.")
 
-        if (comment.getMember().getId() != member.getId()){
-            throw IllegalArgumentException("내가 작성한 댓글이 아닙니다. 수정이 불가능합니다.")
-        }
+        val comment: Comment = validOwnComment(commentId, memberId)
 
         commentRepository.delete(comment)
+    }
 
+    private fun validOwnComment(commentId: Long, memberId: Long): Comment {
+        val comment: Comment =
+            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("댓글이 없습니다.")
+        val member: Member = memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 없습니다.")
+
+        if (comment.getMember().getId() != member.getId()) {
+            throw IllegalArgumentException("내가 작성한 댓글이 아닙니다.")
+        }
+
+        return comment
     }
 }

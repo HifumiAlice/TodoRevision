@@ -3,6 +3,7 @@ package com.teamsparta.todorevision.domain.todo.model
 import com.teamsparta.todorevision.domain.comment.model.Comment
 import com.teamsparta.todorevision.domain.member.model.Member
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
+import com.teamsparta.todorevision.domain.todo.dto.response.TodoWithCommentsResponse
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -53,6 +54,19 @@ class Todo(
             done = done,
             member = member.toResponse()
         )
+    }
+
+    fun toWithCommentsResponse(): TodoWithCommentsResponse {
+        return TodoWithCommentsResponse(
+            id = id!!,
+            title = title,
+            content = content,
+            createdAt = createdAt,
+            done = done,
+            member = member.toResponse(),
+            comments = comments.map {it.toResponse()}
+        )
+
     }
 
     fun updateTitleAndContent(title: String, content: String): Todo {
