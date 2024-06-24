@@ -20,8 +20,12 @@ class MemberPrincipalAspect(
     fun before(joinPoint: JoinPoint) {
         val args: Array<Any> = joinPoint.args
 
-        var header: HttpHeaders = HttpHeaders()
-        var memberDetails: MemberDetails = MemberDetails()
+        val methodSignature : MethodSignature = joinPoint.signature as MethodSignature
+        val method : Method = methodSignature.method as Method
+        val annotation : MemberPrincipal = method.getAnnotation(MemberPrincipal::class.java)
+
+        var header: HttpHeaders? = null
+        var memberDetails: MemberDetails? = null
 
         for (data in args) {
             if (data is HttpHeaders) {
@@ -32,35 +36,45 @@ class MemberPrincipalAspect(
             }
         }
 
-        val token = header["Authorization"]?.get(0) ?: throw IllegalArgumentException("헤더에 토큰 없음")
-
-        if ("Bearer " != token.slice(IntRange(0, 6))) {
-            throw IllegalArgumentException("토큰 형식이 이상함 Beare이 없음")
-        } else {
-            try {
-                jwtService.validateToken(token.substring("Bearer ".length))
-                    .let {
-                        memberDetails.id = it.payload.subject.toLong()
-                        memberDetails.email = it.payload["email", String::class.java]
-                        memberDetails.role = it.payload["role", String::class.java]
-                    }
-            } catch (e: SignatureException) {
-                throw IllegalArgumentException("토큰이 유효하지 않음")
-            }
+        if (header == null || memberDetails == null) {
+            return
         }
 
-        val methodSignature : MethodSignature = joinPoint.signature as MethodSignature
-        val method : Method = methodSignature.method as Method
-        val annotation : MemberPrincipal = method.getAnnotation(MemberPrincipal::class.java)
+        // 토큰이 없다는 것은 로그인을 안 했다는 것
+        val token = header["Authorization"]?.get(0) ?: run {
+            authorize(annotation, memberDetails)
+            return
+        }
+
+        if (!token.startsWith("Bearer ")) {
+            return
+        }
+
+        try {
+            jwtService.validateToken(token.substring("Bearer ".length)).let {
+                memberDetails.id = it.payload.subject.toLong()
+                memberDetails.email = it.payload["email", String::class.java]
+                memberDetails.role = it.payload["role", String::class.java]
+            }
+            authorize(annotation, memberDetails)
+
+        } catch (e: SignatureException) {
+            throw IllegalArgumentException("토큰이 유효하지 않음")
+        }
+
+    }
+
+    private fun authorize(annotation : MemberPrincipal, memberDetails: MemberDetails) {
 
         if (annotation.hasRole.isNotEmpty()) {
 
             val hasRole = annotation.hasRole.split(" ")
 
-            if (memberDetails.role!! !in hasRole ) {
+            if (memberDetails.role !in hasRole ) {
                 throw IllegalArgumentException("API 실행할 권한이 없음")
             }
         }
     }
 }
+
 
