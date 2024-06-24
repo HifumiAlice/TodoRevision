@@ -39,5 +39,20 @@ class LikeService(
         return like.toResponse()
     }
 
+    fun deleteTodoLike(todoId: Long, memberId: Long): Unit {
+
+        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시물이 없습니다.")
+        val member: Member = memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 없습니다.")
+
+        if(todo.getMember().getId() == member.getId()) {
+            throw IllegalArgumentException("자기 게시물이라 좋아요가 존재할 수 없습니다.")
+        }
+
+        val like: Like = likeRepository.findByTodoIdAndMemberId(todo.getId()!!, member.getId()!!)
+            ?: throw java.lang.IllegalArgumentException("좋아요를 누른 적이 없습니다.")
+
+        likeRepository.delete(like)
+    }
+
 
 }
