@@ -1,3 +1,5 @@
 package com.teamsparta.todorevision.infra.aop
 
-data class IdMember()
+data class IdMember(
+    var id : Long
+)

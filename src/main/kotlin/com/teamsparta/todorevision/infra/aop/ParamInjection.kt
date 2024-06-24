@@ -1,3 +1,7 @@
 package com.teamsparta.todorevision.infra.aop
 
-annotation class ParamInjection()
+@Target(AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ParamInjection(
+
+)
