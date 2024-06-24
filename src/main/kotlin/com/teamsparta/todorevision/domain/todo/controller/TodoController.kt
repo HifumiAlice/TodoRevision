@@ -42,6 +42,7 @@ class TodoController(
     @MemberPrincipal("USER")
     @PutMapping("/{id}")
     fun updateTodo(
+        @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
         @RequestBody request: TodoUpdateRequest,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
@@ -52,6 +53,7 @@ class TodoController(
     @MemberPrincipal("USER")
     @PatchMapping("/{id}")
     fun updateTodoDone(
+        @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
     ): ResponseEntity<TodoResponse> {
@@ -61,6 +63,7 @@ class TodoController(
     @MemberPrincipal("USER")
     @DeleteMapping("/{id}")
     fun deleteTodo(
+        @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
         @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
     ): ResponseEntity<Unit> {
