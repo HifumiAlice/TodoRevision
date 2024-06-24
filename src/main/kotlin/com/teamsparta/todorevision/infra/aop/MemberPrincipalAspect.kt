@@ -37,7 +37,7 @@ class MemberPrincipalAspect(
         }
 
         if (header == null || memberDetails == null) {
-            return
+            throw IllegalArgumentException("컨트롤러 확인합시다.")
         }
 
         // 토큰이 없다는 것은 로그인을 안 했다는 것
@@ -47,7 +47,7 @@ class MemberPrincipalAspect(
         }
 
         if (!token.startsWith("Bearer ")) {
-            return
+            throw IllegalArgumentException("토큰 형식이 이상함")
         }
 
         try {
