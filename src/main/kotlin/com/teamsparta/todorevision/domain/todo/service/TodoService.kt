@@ -61,6 +61,7 @@ class TodoService(
 
         val likeTodoIds : List<Long> = likeRepository.findAllByMemberId(memberId).map {it.getTodoId()}
         val todos: List<Todo> = todoRepository.todoList(topic, keyword, orderBy, ascend)
+
         if (memberId == null) {
             return todos.map { it.toResponse(false) }
         }
@@ -78,8 +79,9 @@ class TodoService(
 
         checkTitleAndContent(request.title, request.content)
 
-        return todoRepository.save(todo.updateTitleAndContent(request.title, request.content))
-            .toResponse(false)
+        todoRepository.save(todo.updateTitleAndContent(request.title, request.content))
+
+        return todo.toResponse(false)
     }
 
     fun updateTodoDone(todoId: Long, memberId: Long): TodoResponse {
