@@ -45,18 +45,19 @@ class Todo(
     fun getMember(): Member = this.member
     fun getComments(): MutableList<Comment> = this.comments
 
-    fun toResponse(): TodoResponse {
+    fun toResponse(liked: Boolean): TodoResponse {
         return TodoResponse(
             id = id!!,
             title = title,
             content = content,
             createdAt = createdAt,
             done = done,
-            member = member.toResponse()
+            member = member.toResponse(),
+            liked = liked
         )
     }
 
-    fun toWithCommentsResponse(): TodoWithCommentsResponse {
+    fun toWithCommentsResponse(liked: Boolean): TodoWithCommentsResponse {
         return TodoWithCommentsResponse(
             id = id!!,
             title = title,
@@ -64,6 +65,7 @@ class Todo(
             createdAt = createdAt,
             done = done,
             member = member.toResponse(),
+            liked = liked,
             comments = comments.map {it.toResponse()}
         )
 

@@ -7,19 +7,23 @@ import jakarta.persistence.*
 @Table(name = "todo_like")
 class Like(
     @Column(name = "member_id", nullable = false)
-    var memberId: Long,
+    private var memberId: Long,
 
     @Column(name = "todo_id", nullable = false)
-    var todoId: Long
+    private var todoId: Long
 ) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    private var id: Long? = null
 
-    fun toResponse() : LikeResponse {
+    fun toResponse(): LikeResponse {
         return LikeResponse(
             id = id!!
         )
     }
+
+    fun getMemberId(): Long = memberId
+    fun getTodoId(): Long = todoId
+    fun getId(): Long? = id
 }

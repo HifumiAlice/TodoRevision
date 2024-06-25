@@ -7,4 +7,5 @@ interface LikeRepository: JpaRepository<Like, Long> {
 
     fun existsByTodoIdAndMemberId(todoId: Long, memberId: Long): Boolean
     fun findByTodoIdAndMemberId(todoId: Long, memberId: Long): Like?
+    fun findAllByMemberId(memberId: Long?): List<Like>
 }

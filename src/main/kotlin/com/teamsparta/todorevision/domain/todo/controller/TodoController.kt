@@ -24,19 +24,34 @@ class TodoController(
     fun createTodo(
         @RequestBody request: TodoCreateRequest,
         @RequestHeader headers: HttpHeaders,
-        @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
     ): ResponseEntity<TodoResponse> {
         return ResponseEntity.status(HttpStatus.CREATED).body(todoService.createTodo(request, memberDetails.id!!))
     }
 
+    @MemberPrincipal()
     @GetMapping()
-    fun getTodos(): ResponseEntity<List<TodoResponse>> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodos())
+    fun getTodos(
+        @RequestParam(name = "topic", required = false) topic: String = "",
+        @RequestParam(name = "keyword", required = false) keyword: String = "",
+        @RequestParam(name = "order", required = false) order: String = "createdAt",
+        @RequestParam(name = "ascend", required = false) ascend: Boolean = false,
+        @RequestHeader headers: HttpHeaders,
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
+    ): ResponseEntity<List<TodoResponse>> {
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(todoService.getTodos(topic, keyword, order, ascend, memberDetails.id))
     }
 
+    @MemberPrincipal()
     @GetMapping("/{id}")
-    fun getTodoById(@PathVariable(value = "id") todoId: Long): ResponseEntity<TodoWithCommentsResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId))
+    fun getTodoById(
+        @PathVariable(value = "id") todoId: Long,
+        @RequestHeader headers: HttpHeaders,
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
+    ): ResponseEntity<TodoWithCommentsResponse> {
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId, memberDetails.id))
     }
 
     @MemberPrincipal("USER")
@@ -45,7 +60,7 @@ class TodoController(
         @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
         @RequestBody request: TodoUpdateRequest,
-        @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
     ): ResponseEntity<TodoResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request, memberDetails.id!!))
     }
@@ -55,7 +70,7 @@ class TodoController(
     fun updateTodoDone(
         @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
-        @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
     ): ResponseEntity<TodoResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, memberDetails.id!!))
     }
@@ -65,7 +80,7 @@ class TodoController(
     fun deleteTodo(
         @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
-        @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
     ): ResponseEntity<Unit> {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId, memberDetails.id!!))
     }
