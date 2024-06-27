@@ -1,5 +1,7 @@
 package com.teamsparta.todorevision.domain.todo.controller
 
+import com.teamsparta.todorevision.domain.todo.dto.request.FindType
+import com.teamsparta.todorevision.domain.todo.dto.request.MyPageable
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoCreateRequest
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoUpdateRequest
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
@@ -8,10 +10,16 @@ import com.teamsparta.todorevision.domain.todo.service.TodoService
 import com.teamsparta.todorevision.infra.aop.MemberDetails
 import com.teamsparta.todorevision.infra.aop.MemberPrincipal
 import io.swagger.v3.oas.annotations.Parameter
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.data.domain.Sort.Direction
+import org.springframework.data.domain.Sort.Order
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/todos")
@@ -52,6 +60,27 @@ class TodoController(
         @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
     ): ResponseEntity<TodoWithCommentsResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId, memberDetails.id))
+    }
+
+    @GetMapping("/page")
+    fun getPageTodos(
+        @ModelAttribute myPage: MyPageable,
+        @Parameter(required = false) @ModelAttribute findType: FindType,
+        @RequestParam(name = "date", required = false) date: LocalDate?,
+        @RequestParam(name = "dateBefore", required = false) before: Boolean
+    ): ResponseEntity<Page<TodoResponse>> {
+
+        val sort: List<String> = myPage.sort.split(",")
+        val direction: Direction = when (sort[1].uppercase()) {
+            "ASC" -> Direction.ASC
+            "DESC" -> Direction.DESC
+            else -> Direction.DESC
+        }
+        val order: Order = Order(direction, sort[0])
+        val pageNumber = if (myPage.pageNumber - 1 < 0) 0 else myPage.pageNumber - 1
+        val pageRequest: PageRequest = PageRequest.of(pageNumber, myPage.size, Sort.by(order))
+
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getPage(pageRequest, findType,  date, before))
     }
 
     @MemberPrincipal("USER")

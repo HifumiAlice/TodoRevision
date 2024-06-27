@@ -3,15 +3,19 @@ package com.teamsparta.todorevision.domain.todo.service
 import com.teamsparta.todorevision.domain.like.repository.LikeRepository
 import com.teamsparta.todorevision.domain.member.model.Member
 import com.teamsparta.todorevision.domain.member.repository.MemberRepository
+import com.teamsparta.todorevision.domain.todo.dto.request.FindType
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoCreateRequest
 import com.teamsparta.todorevision.domain.todo.dto.request.TodoUpdateRequest
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoWithCommentsResponse
 import com.teamsparta.todorevision.domain.todo.model.Todo
 import com.teamsparta.todorevision.domain.todo.repository.TodoRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 @Service
 @Transactional
@@ -41,13 +45,14 @@ class TodoService(
     @Transactional(readOnly = true)
     fun getTodoById(todoId: Long, memberId: Long?): TodoWithCommentsResponse {
 
-        val todo : Todo = todoRepository.findByIdOrNull(todoId)?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
+        val todo: Todo =
+            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
 
         if (memberId == null) {
             return todo.toWithCommentsResponse(false)
         }
 
-        return todo.toWithCommentsResponse(likeRepository.existsByTodoIdAndMemberId(todo.getId()!!,memberId))
+        return todo.toWithCommentsResponse(likeRepository.existsByTodoIdAndMemberId(todo.getId()!!, memberId))
     }
 
     @Transactional(readOnly = true)
@@ -59,14 +64,14 @@ class TodoService(
         memberId: Long?
     ): List<TodoResponse> {
 
-        val likeTodoIds : List<Long> = likeRepository.findAllByMemberId(memberId).map {it.getTodoId()}
+        val likeTodoIds: List<Long> = likeRepository.findAllByMemberId(memberId).map { it.getTodoId() }
         val todos: List<Todo> = todoRepository.todoList(topic, keyword, orderBy, ascend)
 
         if (memberId == null) {
             return todos.map { it.toResponse(false) }
         }
 
-        return todos.map { it.toResponse(likeTodoIds.find{ item->item==it.getId()!!} != null) }
+        return todos.map { it.toResponse(likeTodoIds.find { item -> item == it.getId()!! } != null) }
     }
 
     fun updateTodo(todoId: Long, request: TodoUpdateRequest, memberId: Long): TodoResponse {
@@ -119,5 +124,15 @@ class TodoService(
         }
 
         return todo
+    }
+
+    fun getPage(
+        myPage: Pageable,
+        findType: FindType,
+        date: LocalDate?,
+        before: Boolean
+    ): Page<TodoResponse> {
+        val page: Page<Todo> = todoRepository.todoPage(myPage, findType, date, before)
+        return page.map{it.toResponse(false)}
     }
 }
