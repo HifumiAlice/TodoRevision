@@ -8,12 +8,14 @@ import com.teamsparta.todorevision.domain.member.model.Member
 import com.teamsparta.todorevision.domain.member.model.Profile
 import com.teamsparta.todorevision.domain.member.repository.MemberRepository
 import com.teamsparta.todorevision.infra.security.JwtService
+import com.teamsparta.todorevision.infra.security.PasswordEncode
 import org.springframework.stereotype.Service
 
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
-    private val jwtService: JwtService
+    private val jwtService: JwtService,
+    private val passwordEncode: PasswordEncode
 ) {
 
     fun signup(request: MemberSignupRequest): MemberResponse {
@@ -25,7 +27,7 @@ class MemberService(
             profile = Profile(
                 nickname = request.nickname,
             ),
-            password = request.password
+            password = passwordEncode.encodePassword(request.password)
         )
 
         memberRepository.save(member)
@@ -64,11 +66,11 @@ class MemberService(
         val member: Member =
             memberRepository.findByEmail(request.email) ?: throw IllegalArgumentException("존재하지 않는 이메일입니다.")
 
-        if (member.getPassword() != request.password) {
+        if (member.getPassword() != passwordEncode.encodePassword(request.password)) {
             throw IllegalArgumentException("비밀번호가 틀립니다.")
         }
 
-        val id =member.getId()!!
+        val id = member.getId()!!
         val email = member.getEmail()
         val nickname = member.getProfile().getNickname()
         val role = member.getRole()

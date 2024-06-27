@@ -12,4 +12,5 @@ data class TodoResponse(
     val createdAt: LocalDateTime,
     val done: Boolean,
     val member: MemberResponse,
+    val liked : Boolean
 )

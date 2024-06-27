@@ -13,5 +13,6 @@ data class TodoWithCommentsResponse (
     val createdAt: LocalDateTime,
     val done: Boolean,
     val member: MemberResponse,
+    val liked: Boolean,
     val comments: List<CommentResponse>
 )

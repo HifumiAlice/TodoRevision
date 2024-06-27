@@ -1,4 +1,4 @@
-package com.teamsparta.todorevision.domain.like.response
+package com.teamsparta.todorevision.domain.like.service
 
 import com.teamsparta.todorevision.domain.like.dto.response.LikeResponse
 import com.teamsparta.todorevision.domain.like.model.Like

@@ -47,6 +47,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta") // 추가!
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta") // 추가!
