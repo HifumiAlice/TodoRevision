@@ -1,4 +1,4 @@
-package com.teamsparta.todorevision.infra.aop
+package com.teamsparta.todorevision.infra.annotation
 
 
 @Target(AnnotationTarget.FUNCTION)

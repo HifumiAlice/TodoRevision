@@ -1,5 +1,6 @@
 package com.teamsparta.todorevision.infra.aop
 
+import com.teamsparta.todorevision.infra.annotation.MemberPrincipal
 import com.teamsparta.todorevision.infra.security.JwtService
 import io.jsonwebtoken.security.SignatureException
 import org.aspectj.lang.JoinPoint
@@ -16,7 +17,7 @@ class MemberPrincipalAspect(
     private val jwtService: JwtService,
 ) {
 
-    @Before("@annotation(com.teamsparta.todorevision.infra.aop.MemberPrincipal)")
+    @Before("@annotation(com.teamsparta.todorevision.infra.annotation.MemberPrincipal)")
     fun before(joinPoint: JoinPoint) {
         val args: Array<Any> = joinPoint.args
 
@@ -51,7 +52,7 @@ class MemberPrincipalAspect(
         }
 
         try {
-            jwtService.validateToken(token.substring("Bearer ".length)).let {
+            jwtService.validateToken(token.substring("Bearer ".length)).onSuccess {
                 memberDetails.id = it.payload.subject.toLong()
                 memberDetails.email = it.payload["email", String::class.java]
                 memberDetails.role = it.payload["role", String::class.java]
