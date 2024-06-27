@@ -76,7 +76,6 @@ class TodoRepositoryImpl : CustomTodoRepository, QueryDslSupport() {
 
         if (date != null) {
             if (before) {
-
                 whereBuilder.and(todo.createdAt.before(LocalDateTime.of(date, LocalTime.MIDNIGHT)))
             } else {
                 whereBuilder.and(todo.createdAt.after(LocalDateTime.of(date, LocalTime.MIDNIGHT)))
