@@ -7,8 +7,10 @@ import com.teamsparta.todorevision.domain.todo.dto.request.TodoUpdateRequest
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoWithCommentsResponse
 import com.teamsparta.todorevision.domain.todo.service.TodoService
+import com.teamsparta.todorevision.infra.annotation.AuthenticationUserPrincipal
 import com.teamsparta.todorevision.infra.aop.MemberDetails
-import com.teamsparta.todorevision.infra.aop.MemberPrincipal
+import com.teamsparta.todorevision.infra.annotation.MemberPrincipal
+import com.teamsparta.todorevision.infra.resolver.UserPrincipal
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -27,39 +29,47 @@ class TodoController(
     private val todoService: TodoService,
 ) {
 
-    @MemberPrincipal("USER")
     @PostMapping()
     fun createTodo(
         @RequestBody request: TodoCreateRequest,
-        @RequestHeader headers: HttpHeaders,
-        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
     ): ResponseEntity<TodoResponse> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(todoService.createTodo(request, memberDetails.id!!))
+
+        if (userPrincipal == null) {
+            throw IllegalArgumentException("User principal cannot be null")
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(todoService.createTodo(request, userPrincipal.id))
     }
 
-    @MemberPrincipal()
     @GetMapping()
     fun getTodos(
         @RequestParam(name = "topic", required = false) topic: String = "",
         @RequestParam(name = "keyword", required = false) keyword: String = "",
         @RequestParam(name = "order", required = false) order: String = "createdAt",
         @RequestParam(name = "ascend", required = false) ascend: Boolean = false,
-        @RequestHeader headers: HttpHeaders,
-        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
     ): ResponseEntity<List<TodoResponse>> {
 
+        if (userPrincipal == null) {
+            throw IllegalArgumentException("User principal cannot be null")
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
-            .body(todoService.getTodos(topic, keyword, order, ascend, memberDetails.id))
+            .body(todoService.getTodos(topic, keyword, order, ascend, userPrincipal.id))
     }
 
-    @MemberPrincipal()
     @GetMapping("/{id}")
     fun getTodoById(
         @PathVariable(value = "id") todoId: Long,
-        @RequestHeader headers: HttpHeaders,
-        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
     ): ResponseEntity<TodoWithCommentsResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId, memberDetails.id))
+
+        if (userPrincipal == null) {
+            throw IllegalArgumentException("User principal cannot be null")
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId, userPrincipal.id))
     }
 
     @GetMapping("/page")
@@ -83,35 +93,44 @@ class TodoController(
         return ResponseEntity.status(HttpStatus.OK).body(todoService.getPage(pageRequest, findType,  date, before))
     }
 
-    @MemberPrincipal("USER")
     @PutMapping("/{id}")
     fun updateTodo(
-        @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
         @RequestBody request: TodoUpdateRequest,
-        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
     ): ResponseEntity<TodoResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request, memberDetails.id!!))
+
+        if (userPrincipal == null) {
+            throw IllegalArgumentException("User principal cannot be null")
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request, userPrincipal.id))
     }
 
-    @MemberPrincipal("USER")
     @PatchMapping("/{id}")
     fun updateTodoDone(
-        @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
-        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
     ): ResponseEntity<TodoResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, memberDetails.id!!))
+
+        if (userPrincipal == null) {
+            throw IllegalArgumentException("User principal cannot be null")
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, userPrincipal.id))
     }
 
-    @MemberPrincipal("USER")
     @DeleteMapping("/{id}")
     fun deleteTodo(
-        @RequestHeader headers: HttpHeaders,
         @PathVariable(value = "id") todoId: Long,
-        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
     ): ResponseEntity<Unit> {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId, memberDetails.id!!))
+
+        if (userPrincipal == null) {
+            throw IllegalArgumentException("User principal cannot be null")
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId, userPrincipal.id))
     }
 
 }
