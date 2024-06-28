@@ -44,7 +44,7 @@ class LikeService(
         val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시물이 없습니다.")
         val member: Member = memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 없습니다.")
 
-        if(todo.getMember().getId() == member.getId()) {
+        if (todo.getMember().getId() == member.getId()) {
             throw IllegalArgumentException("자기 게시물이라 좋아요가 존재할 수 없습니다.")
         }
 

@@ -27,11 +27,11 @@ class Todo(
     @JoinColumn(name = "member_id", nullable = false)
     private var member: Member,
 
-    @OneToMany(fetch = FetchType.LAZY ,cascade = [(CascadeType.ALL)], orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = [(CascadeType.ALL)], orphanRemoval = true)
     @JoinColumn(name = "todo_id", nullable = false)
-    private val comments : MutableList<Comment> = mutableListOf()
+    private val comments: MutableList<Comment> = mutableListOf()
 
-    ) {
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Long? = null
@@ -66,7 +66,7 @@ class Todo(
             done = done,
             member = member.toResponse(),
             liked = liked,
-            comments = comments.map {it.toResponse()}
+            comments = comments.map { it.toResponse() }
         )
 
     }

@@ -5,7 +5,7 @@ import com.teamsparta.todorevision.domain.comment.dto.response.CommentResponse
 import com.teamsparta.todorevision.domain.member.dto.response.MemberResponse
 import java.time.LocalDateTime
 
-data class TodoWithCommentsResponse (
+data class TodoWithCommentsResponse(
     val id: Long,
     val title: String,
     val content: String,

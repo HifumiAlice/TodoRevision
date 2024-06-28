@@ -1,14 +1,11 @@
 package com.teamsparta.todorevision.domain.comment.controller
 
-import com.sun.net.httpserver.HttpPrincipal
 import com.teamsparta.todorevision.domain.comment.dto.request.CommentCreateRequest
 import com.teamsparta.todorevision.domain.comment.dto.request.CommentUpdateRequest
 import com.teamsparta.todorevision.domain.comment.dto.response.CommentResponse
 import com.teamsparta.todorevision.domain.comment.service.CommentService
-import com.teamsparta.todorevision.infra.annotation.AuthenticationUserPrincipal
-import com.teamsparta.todorevision.infra.aop.MemberDetails
 import com.teamsparta.todorevision.infra.annotation.MemberPrincipal
-import com.teamsparta.todorevision.infra.resolver.UserPrincipal
+import com.teamsparta.todorevision.infra.aop.MemberDetails
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -26,7 +23,7 @@ class CommentController(
     fun createComment(
         @PathVariable todoId: Long,
         @RequestHeader headers: HttpHeaders,
-        @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails,
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails,
         @RequestBody request: CommentCreateRequest
     ): ResponseEntity<CommentResponse> {
 
@@ -40,7 +37,7 @@ class CommentController(
     fun updateComment(
         @PathVariable commentId: Long,
         @RequestHeader headers: HttpHeaders,
-        @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails,
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails,
         @RequestBody request: CommentUpdateRequest
     ): ResponseEntity<CommentResponse> {
 
@@ -54,20 +51,11 @@ class CommentController(
     fun deleteComment(
         @PathVariable commentId: Long,
         @RequestHeader headers: HttpHeaders,
-        @Parameter(hidden = true) @ModelAttribute memberDetails : MemberDetails,
+        @Parameter(hidden = true) @ModelAttribute memberDetails: MemberDetails,
     ): ResponseEntity<Unit> {
 
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .body(commentService.deleteComment(commentId, memberDetails.id!!))
-    }
-
-    @PostMapping("resolver")
-    fun resolver(
-        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?,
-        @RequestBody request: CommentCreateRequest
-    ) : Unit {
-
-        return Unit
     }
 }

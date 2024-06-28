@@ -135,6 +135,6 @@ class TodoService(
     ): Page<TodoResponse> {
         val page: Page<Todo> = todoRepository.todoPage(myPage, findType, date, before)
         val likeTodoIds = likeRepository.findAllByMemberId(memberId).map { it.getTodoId() }
-        return page.map{it.toResponse(likeTodoIds.find { item -> item == it.getId()!! } != null )}
+        return page.map { it.toResponse(likeTodoIds.find { item -> item == it.getId()!! } != null) }
     }
 }

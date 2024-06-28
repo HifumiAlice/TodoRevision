@@ -1,8 +1,6 @@
 package com.teamsparta.todorevision.domain.comment.model
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.teamsparta.todorevision.domain.comment.dto.response.CommentResponse
-import com.teamsparta.todorevision.domain.member.dto.response.MemberResponse
 import com.teamsparta.todorevision.domain.member.model.Member
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -17,7 +15,6 @@ class Comment(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private var member: Member
-
 
 ) {
     @Id

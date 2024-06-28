@@ -75,7 +75,8 @@ class TodoController(
         val pageNumber = if (myPage.pageNumber - 1 < 0) 0 else myPage.pageNumber - 1
         val pageRequest: PageRequest = PageRequest.of(pageNumber, myPage.size, Sort.by(order))
 
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.getPage(pageRequest, findType, date, before, userPrincipal?.id))
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(todoService.getPage(pageRequest, findType, date, before, userPrincipal?.id))
     }
 
     @PreAuthorize("USER")
