@@ -61,7 +61,8 @@ class TodoController(
         @ModelAttribute myPage: MyPageable,
         @Parameter(required = false) @ModelAttribute findType: FindType,
         @RequestParam(name = "date", required = false) date: LocalDate?,
-        @RequestParam(name = "dateBefore", required = false) before: Boolean
+        @RequestParam(name = "dateBefore", required = false) before: Boolean,
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal: UserPrincipal?
     ): ResponseEntity<Page<TodoResponse>> {
 
         val sort: List<String> = myPage.sort.split(",")
@@ -74,7 +75,7 @@ class TodoController(
         val pageNumber = if (myPage.pageNumber - 1 < 0) 0 else myPage.pageNumber - 1
         val pageRequest: PageRequest = PageRequest.of(pageNumber, myPage.size, Sort.by(order))
 
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.getPage(pageRequest, findType, date, before))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getPage(pageRequest, findType, date, before, userPrincipal?.id))
     }
 
     @PreAuthorize("USER")
