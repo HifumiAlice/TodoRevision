@@ -1,5 +1,8 @@
 package com.teamsparta.todorevision.infra.aop
 
+import com.teamsparta.todorevision.infra.annotation.MemberPrincipal
+import com.teamsparta.todorevision.infra.annotation.PreAuthorize
+import com.teamsparta.todorevision.infra.resolver.UserPrincipal
 import com.teamsparta.todorevision.infra.security.JwtService
 import io.jsonwebtoken.security.SignatureException
 import org.aspectj.lang.JoinPoint
@@ -16,13 +19,13 @@ class MemberPrincipalAspect(
     private val jwtService: JwtService,
 ) {
 
-    @Before("@annotation(com.teamsparta.todorevision.infra.aop.MemberPrincipal)")
+    @Before("@annotation(com.teamsparta.todorevision.infra.annotation.MemberPrincipal)")
     fun before(joinPoint: JoinPoint) {
         val args: Array<Any> = joinPoint.args
 
-        val methodSignature : MethodSignature = joinPoint.signature as MethodSignature
-        val method : Method = methodSignature.method as Method
-        val annotation : MemberPrincipal = method.getAnnotation(MemberPrincipal::class.java)
+        val methodSignature: MethodSignature = joinPoint.signature as MethodSignature
+        val method: Method = methodSignature.method as Method
+        val annotation: MemberPrincipal = method.getAnnotation(MemberPrincipal::class.java)
 
         var header: HttpHeaders? = null
         var memberDetails: MemberDetails? = null
@@ -31,7 +34,7 @@ class MemberPrincipalAspect(
             if (data is HttpHeaders) {
                 header = data
             }
-            if (data is MemberDetails){
+            if (data is MemberDetails) {
                 memberDetails = data
             }
         }
@@ -51,7 +54,7 @@ class MemberPrincipalAspect(
         }
 
         try {
-            jwtService.validateToken(token.substring("Bearer ".length)).let {
+            jwtService.validateToken(token.substring("Bearer ".length)).onSuccess {
                 memberDetails.id = it.payload.subject.toLong()
                 memberDetails.email = it.payload["email", String::class.java]
                 memberDetails.role = it.payload["role", String::class.java]
@@ -64,14 +67,41 @@ class MemberPrincipalAspect(
 
     }
 
-    private fun authorize(annotation : MemberPrincipal, memberDetails: MemberDetails) {
+    private fun authorize(annotation: MemberPrincipal, memberDetails: MemberDetails) {
 
         if (annotation.hasRole.isNotEmpty()) {
 
             val hasRole = annotation.hasRole.split(" ")
 
-            if (memberDetails.role !in hasRole ) {
+            if (memberDetails.role !in hasRole) {
                 throw IllegalArgumentException("API 실행할 권한이 없음")
+            }
+        }
+    }
+
+    @Before("@annotation(com.teamsparta.todorevision.infra.annotation.PreAuthorize)")
+    fun checkRole(joinPoint: JoinPoint) {
+
+        var userPrincipal: UserPrincipal? = null
+
+        joinPoint.args.forEach { arg ->
+            if (arg is UserPrincipal) {
+                userPrincipal = arg
+            }
+        }
+
+
+        val preAuthorize: PreAuthorize = joinPoint.signature.let {
+            it as MethodSignature
+            it.method as Method
+        }.getAnnotation(PreAuthorize::class.java)
+        val value = preAuthorize.value
+
+        if (value.isNotEmpty()){
+            val roles = value.split(" ")
+
+            if (userPrincipal?.role !in roles) {
+                throw IllegalArgumentException("API를 실행할 권한이 없다.")
             }
         }
     }

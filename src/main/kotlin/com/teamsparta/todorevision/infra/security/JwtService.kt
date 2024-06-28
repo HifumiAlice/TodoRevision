@@ -22,9 +22,12 @@ class JwtService(
     private val expired: Long // 168시간 7일,
 
 ) {
-    fun validateToken(token: String): Jws<Claims> {
-        val key = Keys.hmacShaKeyFor(secretKey.toByteArray(StandardCharsets.UTF_8))
-        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token)
+    fun validateToken(token: String): Result<Jws<Claims>> {
+        return kotlin.runCatching {
+            val key = Keys.hmacShaKeyFor(secretKey.toByteArray(StandardCharsets.UTF_8))
+            Jwts.parser().verifyWith(key).build().parseSignedClaims(token)
+        }
+
     }
 
     fun generateToken(id: Long, email: String, nickname: String, role: String): String {

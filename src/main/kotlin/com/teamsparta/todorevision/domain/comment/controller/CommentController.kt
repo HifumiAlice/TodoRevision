@@ -1,11 +1,14 @@
 package com.teamsparta.todorevision.domain.comment.controller
 
+import com.sun.net.httpserver.HttpPrincipal
 import com.teamsparta.todorevision.domain.comment.dto.request.CommentCreateRequest
 import com.teamsparta.todorevision.domain.comment.dto.request.CommentUpdateRequest
 import com.teamsparta.todorevision.domain.comment.dto.response.CommentResponse
 import com.teamsparta.todorevision.domain.comment.service.CommentService
+import com.teamsparta.todorevision.infra.annotation.AuthenticationUserPrincipal
 import com.teamsparta.todorevision.infra.aop.MemberDetails
-import com.teamsparta.todorevision.infra.aop.MemberPrincipal
+import com.teamsparta.todorevision.infra.annotation.MemberPrincipal
+import com.teamsparta.todorevision.infra.resolver.UserPrincipal
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -57,5 +60,14 @@ class CommentController(
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .body(commentService.deleteComment(commentId, memberDetails.id!!))
+    }
+
+    @PostMapping("resolver")
+    fun resolver(
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?,
+        @RequestBody request: CommentCreateRequest
+    ) : Unit {
+
+        return Unit
     }
 }
