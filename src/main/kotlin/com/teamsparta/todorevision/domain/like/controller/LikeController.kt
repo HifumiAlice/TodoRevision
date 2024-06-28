@@ -3,7 +3,7 @@ package com.teamsparta.todorevision.domain.like.controller
 import com.teamsparta.todorevision.domain.like.dto.response.LikeResponse
 import com.teamsparta.todorevision.domain.like.service.LikeService
 import com.teamsparta.todorevision.infra.aop.MemberDetails
-import com.teamsparta.todorevision.infra.aop.MemberPrincipal
+import com.teamsparta.todorevision.infra.annotation.MemberPrincipal
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
