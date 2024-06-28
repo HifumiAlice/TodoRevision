@@ -8,8 +8,7 @@ import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoWithCommentsResponse
 import com.teamsparta.todorevision.domain.todo.service.TodoService
 import com.teamsparta.todorevision.infra.annotation.AuthenticationUserPrincipal
-import com.teamsparta.todorevision.infra.aop.MemberDetails
-import com.teamsparta.todorevision.infra.annotation.MemberPrincipal
+import com.teamsparta.todorevision.infra.annotation.PreAuthorize
 import com.teamsparta.todorevision.infra.resolver.UserPrincipal
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.data.domain.Page
@@ -17,7 +16,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.domain.Sort.Order
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -28,18 +26,14 @@ import java.time.LocalDate
 class TodoController(
     private val todoService: TodoService,
 ) {
-
+    @PreAuthorize("USER")
     @PostMapping()
     fun createTodo(
         @RequestBody request: TodoCreateRequest,
-        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal: UserPrincipal?
     ): ResponseEntity<TodoResponse> {
 
-        if (userPrincipal == null) {
-            throw IllegalArgumentException("User principal cannot be null")
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(todoService.createTodo(request, userPrincipal.id))
+        return ResponseEntity.status(HttpStatus.CREATED).body(todoService.createTodo(request, userPrincipal?.id!!))
     }
 
     @GetMapping()
@@ -48,28 +42,18 @@ class TodoController(
         @RequestParam(name = "keyword", required = false) keyword: String = "",
         @RequestParam(name = "order", required = false) order: String = "createdAt",
         @RequestParam(name = "ascend", required = false) ascend: Boolean = false,
-        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal: UserPrincipal?
     ): ResponseEntity<List<TodoResponse>> {
-
-        if (userPrincipal == null) {
-            throw IllegalArgumentException("User principal cannot be null")
-        }
-
         return ResponseEntity.status(HttpStatus.OK)
-            .body(todoService.getTodos(topic, keyword, order, ascend, userPrincipal.id))
+            .body(todoService.getTodos(topic, keyword, order, ascend, userPrincipal?.id))
     }
 
     @GetMapping("/{id}")
     fun getTodoById(
         @PathVariable(value = "id") todoId: Long,
-        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal: UserPrincipal?
     ): ResponseEntity<TodoWithCommentsResponse> {
-
-        if (userPrincipal == null) {
-            throw IllegalArgumentException("User principal cannot be null")
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId, userPrincipal.id))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getTodoById(todoId, userPrincipal?.id))
     }
 
     @GetMapping("/page")
@@ -90,47 +74,36 @@ class TodoController(
         val pageNumber = if (myPage.pageNumber - 1 < 0) 0 else myPage.pageNumber - 1
         val pageRequest: PageRequest = PageRequest.of(pageNumber, myPage.size, Sort.by(order))
 
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.getPage(pageRequest, findType,  date, before))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.getPage(pageRequest, findType, date, before))
     }
 
+    @PreAuthorize("USER")
     @PutMapping("/{id}")
     fun updateTodo(
         @PathVariable(value = "id") todoId: Long,
         @RequestBody request: TodoUpdateRequest,
-        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal: UserPrincipal?
     ): ResponseEntity<TodoResponse> {
-
-        if (userPrincipal == null) {
-            throw IllegalArgumentException("User principal cannot be null")
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request, userPrincipal.id))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodo(todoId, request, userPrincipal?.id!!))
     }
 
+    @PreAuthorize("USER")
     @PatchMapping("/{id}")
     fun updateTodoDone(
         @PathVariable(value = "id") todoId: Long,
-        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal: UserPrincipal?
     ): ResponseEntity<TodoResponse> {
-
-        if (userPrincipal == null) {
-            throw IllegalArgumentException("User principal cannot be null")
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, userPrincipal.id))
+        return ResponseEntity.status(HttpStatus.OK).body(todoService.updateTodoDone(todoId, userPrincipal?.id!!))
     }
 
+    @PreAuthorize("USER")
     @DeleteMapping("/{id}")
     fun deleteTodo(
         @PathVariable(value = "id") todoId: Long,
-        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal : UserPrincipal?
+        @Parameter(hidden = true) @AuthenticationUserPrincipal userPrincipal: UserPrincipal?
     ): ResponseEntity<Unit> {
 
-        if (userPrincipal == null) {
-            throw IllegalArgumentException("User principal cannot be null")
-        }
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId, userPrincipal.id))
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(todoService.deleteTodo(todoId, userPrincipal?.id!!))
     }
 
 }
