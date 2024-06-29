@@ -74,9 +74,26 @@ class TodoService(
         return todos.map { it.toResponse(likeTodoIds.find { item -> item == it.getId()!! } != null) }
     }
 
+    fun getPage(
+        myPage: Pageable,
+        findType: FindType,
+        date: LocalDate?,
+        before: Boolean,
+        memberId: Long?
+    ): Page<TodoResponse> {
+        val page: Page<Todo> = todoRepository.todoPage(myPage, findType, date, before)
+        val likeTodoIds = likeRepository.findAllByMemberId(memberId).map { it.getTodoId() }
+        return page.map { it.toResponse(likeTodoIds.find { item -> item == it.getId()!! } != null) }
+    }
+
     fun updateTodo(todoId: Long, request: TodoUpdateRequest, memberId: Long): TodoResponse {
 
-        val todo: Todo = `내 게시글인지 확인 후 게시글 반환`(todoId, memberId)
+        val todo: Todo =
+            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시글이 존재하지 않습니다. ${todoId}")
+
+        if (!checkMyTodo(todo.getMember().getId()!!, memberId)) {
+            throw IllegalArgumentException("자신의 게시글이 아닙니다. 수정할 수 업습니다.")
+        }
 
         if (todo.getDone()) {
             throw IllegalArgumentException("이미 완료된 할 일입니다. 수정할 수 없습니다.")
@@ -91,7 +108,13 @@ class TodoService(
 
     fun updateTodoDone(todoId: Long, memberId: Long): TodoResponse {
 
-        val todo: Todo = `내 게시글인지 확인 후 게시글 반환`(todoId, memberId)
+        val todo: Todo =
+            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시글이 존재하지 않습니다. ${todoId}")
+
+        if (!checkMyTodo(todo.getMember().getId()!!, memberId)) {
+            throw IllegalArgumentException("자신의 게시글이 아닙니다. 수정할 수 업습니다.")
+        }
+
 
         todo.updateDone()
 
@@ -102,7 +125,13 @@ class TodoService(
 
     fun deleteTodo(todoId: Long, memberId: Long): Unit {
 
-        val todo = `내 게시글인지 확인 후 게시글 반환`(todoId, memberId)
+        val todo: Todo =
+            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시글이 존재하지 않습니다. ${todoId}")
+
+        if (!checkMyTodo(todo.getMember().getId()!!, memberId)) {
+            throw IllegalArgumentException("자신의 게시글이 아닙니다. 삭제할 수 없습니다..")
+        }
+
 
         todoRepository.delete(todo)
     }
@@ -112,29 +141,13 @@ class TodoService(
         if (content.length !in 0..5000) throw IllegalArgumentException("내용은 5000자 까지 가능합니다.")
     }
 
-    private fun `내 게시글인지 확인 후 게시글 반환`(todoId: Long, memberId: Long): Todo {
+    private fun checkMyTodo(todoMemberId: Long, memberId: Long): Boolean {
 
-        val todo: Todo =
-            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시글이 존재하지 않습니다. ${todoId}")
         val member: Member =
             memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다. ${memberId}")
 
-        if (todo.getMember().getId() != member.getId()) {
-            throw IllegalArgumentException("자신의 게시글이 아닙니다.")
-        }
-
-        return todo
+        return todoMemberId == member.getId()
     }
 
-    fun getPage(
-        myPage: Pageable,
-        findType: FindType,
-        date: LocalDate?,
-        before: Boolean,
-        memberId: Long?
-    ): Page<TodoResponse> {
-        val page: Page<Todo> = todoRepository.todoPage(myPage, findType, date, before)
-        val likeTodoIds = likeRepository.findAllByMemberId(memberId).map { it.getTodoId() }
-        return page.map{it.toResponse(likeTodoIds.find { item -> item == it.getId()!! } != null )}
-    }
+
 }

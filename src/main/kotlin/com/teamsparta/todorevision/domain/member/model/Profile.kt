@@ -4,7 +4,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 
 @Embeddable
-class Profile (
+class Profile(
     @Column(name = "nickname", nullable = false)
     private var nickname: String
 ) {

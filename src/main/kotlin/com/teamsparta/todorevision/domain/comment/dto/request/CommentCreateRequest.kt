@@ -1,5 +1,5 @@
 package com.teamsparta.todorevision.domain.comment.dto.request
 
-data class CommentCreateRequest (
+data class CommentCreateRequest(
     val content: String
 )

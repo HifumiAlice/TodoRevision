@@ -14,9 +14,10 @@ class GlobalExceptionHandler {
     fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<ErrorResponse> {
         return ResponseEntity.badRequest().body(ErrorResponse(e.message!!))
     }
-    
+
     @ExceptionHandler(SQLException::class)
     fun handleSQLException(e: SQLException): ResponseEntity<ErrorResponse> {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse("아니 왜 발생하냐고 ㅡㅡ\n${e.message}"))
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ErrorResponse("아니 왜 발생하냐고 ㅡㅡ\n${e.message}"))
     }
 }

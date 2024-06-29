@@ -101,7 +101,7 @@ class TodoRepositoryImpl : CustomTodoRepository, QueryDslSupport() {
 
         return pageable.sort.toList().map {
             OrderSpecifier(
-                if(it.isAscending) Order.ASC else Order.DESC,
+                if (it.isAscending) Order.ASC else Order.DESC,
                 path.get(it.property) as Expression<Comparable<*>>
             )
         }.toTypedArray()
