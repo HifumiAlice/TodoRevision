@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration
 class SwaggerConfig {
 
     @Bean
-    fun openAPI() : OpenAPI {
+    fun openAPI(): OpenAPI {
         return OpenAPI()
             .components(Components())
             .info(

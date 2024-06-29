@@ -97,7 +97,7 @@ class MemberPrincipalAspect(
         }.getAnnotation(PreAuthorize::class.java)
         val value = preAuthorize.value
 
-        if (value.isNotEmpty()){
+        if (value.isNotEmpty()) {
             val roles = value.split(" ")
 
             if (userPrincipal?.role !in roles) {
