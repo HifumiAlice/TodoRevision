@@ -14,13 +14,12 @@ class Comment(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private var member: Member
-
-) {
+    private var member: Member,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private var id: Long? = null
+    private var id: Long? = null,
 
+) {
     @Column(name = "create_at", nullable = false)
     private var createdAt: LocalDateTime = LocalDateTime.now()
 

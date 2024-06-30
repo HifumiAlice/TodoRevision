@@ -10,12 +10,12 @@ class Like(
     private var memberId: Long,
 
     @Column(name = "todo_id", nullable = false)
-    private var todoId: Long
-) {
+    private var todoId: Long,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Long? = null
+) {
 
     fun toResponse(): LikeResponse {
         return LikeResponse(
