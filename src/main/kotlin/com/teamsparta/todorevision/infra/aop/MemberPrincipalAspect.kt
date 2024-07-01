@@ -2,6 +2,7 @@ package com.teamsparta.todorevision.infra.aop
 
 import com.teamsparta.todorevision.infra.annotation.MemberPrincipal
 import com.teamsparta.todorevision.infra.annotation.PreAuthorize
+import com.teamsparta.todorevision.infra.exception.UnAuthorizeException
 import com.teamsparta.todorevision.infra.resolver.UserPrincipal
 import com.teamsparta.todorevision.infra.security.JwtService
 import io.jsonwebtoken.security.SignatureException
@@ -74,7 +75,7 @@ class MemberPrincipalAspect(
             val hasRole = annotation.hasRole.split(" ")
 
             if (memberDetails.role !in hasRole) {
-                throw IllegalArgumentException("API 실행할 권한이 없음")
+                throw UnAuthorizeException("API 실행할 권한이 없음")
             }
         }
     }
@@ -101,7 +102,7 @@ class MemberPrincipalAspect(
             val roles = value.split(" ")
 
             if (userPrincipal?.role !in roles) {
-                throw IllegalArgumentException("API를 실행할 권한이 없다.")
+                throw UnAuthorizeException("API를 실행할 권한이 없다.")
             }
         }
     }

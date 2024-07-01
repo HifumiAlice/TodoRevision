@@ -9,6 +9,8 @@ import com.teamsparta.todorevision.domain.member.model.Member
 import com.teamsparta.todorevision.domain.member.repository.MemberRepository
 import com.teamsparta.todorevision.domain.todo.model.Todo
 import com.teamsparta.todorevision.domain.todo.repository.TodoRepository
+import com.teamsparta.todorevision.infra.exception.ModelNotFoundException
+import com.teamsparta.todorevision.infra.exception.UnAuthorizeException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,9 +24,9 @@ class CommentService(
 ) {
 
     fun createComment(todoId: Long, request: CommentCreateRequest, memberId: Long): CommentResponse {
-        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("할일이 존재하지 않습니다.")
+        val todo: Todo = todoRepository.findByIdOrNull(todoId) ?: throw ModelNotFoundException("Todo", todoId)
         val member: Member =
-            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다.")
+            memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId)
 
         val comment: Comment = Comment(
             content = request.content,
@@ -40,10 +42,11 @@ class CommentService(
 
     fun updateComment(commentId: Long, request: CommentUpdateRequest, memberId: Long): CommentResponse {
 
-        val comment: Comment = commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("댓글이 존재하지 않습니다.")
+        val comment: Comment =
+            commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
 
         if (!checkMyComment(comment.getMember().getId()!!, memberId)) {
-            throw IllegalArgumentException("자신의 댓글이 아닙니다. 삭제할 수 없습니다.")
+            throw UnAuthorizeException("자신의 댓글이 아닙니다. 삭제할 수 없습니다.")
         }
 
         comment.updateContent(request.content)
@@ -56,17 +59,18 @@ class CommentService(
 
     fun deleteComment(commentId: Long, memberId: Long): Unit {
 
-        val comment: Comment = commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException("댓글이 존재하지 않습니다.")
+        val comment: Comment =
+            commentRepository.findByIdOrNull(commentId) ?: throw ModelNotFoundException("Comment", commentId)
 
-            if (!checkMyComment(comment.getMember().getId()!!, memberId)) {
-                throw IllegalArgumentException("자신의 댓글이 아닙니다. 삭제할 수 없습니다.")
-            }
+        if (!checkMyComment(comment.getMember().getId()!!, memberId)) {
+            throw UnAuthorizeException("자신의 댓글이 아닙니다. 삭제할 수 없습니다.")
+        }
 
         commentRepository.delete(comment)
     }
 
     private fun checkMyComment(commentMemberId: Long, memberId: Long): Boolean {
-        val member: Member = memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 없습니다.")
+        val member: Member = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId)
 
         return commentMemberId == member.getId()
     }
