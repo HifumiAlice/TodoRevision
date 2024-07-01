@@ -48,7 +48,7 @@ Like - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Like)
 
 나머지 - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/%EA%B7%B8-%EC%99%B8)
 
-기존 과제와의 차이점 - [
+기존 과제와의 차이점 - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/%EC%B0%A8%EC%9D%B4%EC%A0%90)
 
 ---------------
 
