@@ -46,17 +46,27 @@ Member - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Member)
 
 Like - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Like)
 
-그 외
+나머지 - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/%EA%B7%B8-%EC%99%B8)
+
+기존 과제와의 차이점 - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/%EC%B0%A8%EC%9D%B4%EC%A0%90)
 
 ---------------
 
 ### API 명세서
 
-ㅇㅇ
+[구글 시트 링크](https://docs.google.com/spreadsheets/d/1318_gci9f5wuR6dzapmkYWWgj8JPeouxcDEWzubpBvA/edit?gid=0#gid=0)
 
 ### ERD
 
-dd
+<details>
+<summary> ERD </summary>
+<div markdown="1">
+
+<img src = "https://github.com/HifumiAlice/TodoRevision/blob/dev/memo/images/Todo%EB%B3%B5%EC%8A%B5.png" alt = "에러" >
+
+</div>
+</details>
+
 
 
 
