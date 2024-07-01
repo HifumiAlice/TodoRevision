@@ -46,7 +46,9 @@ Member - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Member)
 
 Like - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Like)
 
-그 외
+나머지 - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/%EA%B7%B8-%EC%99%B8)
+
+기존 과제와의 차이점 - [
 
 ---------------
 
