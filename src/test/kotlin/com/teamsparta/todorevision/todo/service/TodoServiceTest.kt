@@ -14,10 +14,13 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
+@ActiveProfiles("test")
 class TodoServiceTest@Autowired constructor(
     private val todoRepository : TodoRepository,
     private val memberRepository : MemberRepository,
@@ -64,9 +67,9 @@ class TodoServiceTest@Autowired constructor(
             request = TodoCreateRequest(
                 title = "테스트 제목",
                 content = "테스트 내용"
-            ), memberId = 1L
+            ), memberId = 2L
         )}.let{
-            it.message shouldBe "멤버가 존재하지 않습니다. 1"
+            it.message shouldBe "멤버가 존재하지 않습니다. 2"
         }
 
     }

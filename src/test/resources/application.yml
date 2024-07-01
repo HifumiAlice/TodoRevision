@@ -11,3 +11,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+
+auth:
+  password:
+    salt: "AbCdEf0123"
+  jwt:
+    issuer: "com.teamsparta.todorivision"
+    secret: "hieEASWJwLqT2bRicY6eUc9Dw2mCmhI2"
+    expired: 168
