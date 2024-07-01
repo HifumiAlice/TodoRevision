@@ -38,13 +38,13 @@ Database : postgresql
 
 ### 구현 기능
 
-todo
+Todo - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Todo)
 
-comment
+Comment - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Comment)
 
-member
+Member - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Member)
 
-like
+Like - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Like)
 
 그 외
 
@@ -56,6 +56,7 @@ like
 
 ### ERD
 
+dd
 
 
 
