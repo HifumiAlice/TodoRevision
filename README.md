@@ -52,11 +52,19 @@ Like - [상세보기](https://github.com/HifumiAlice/TodoRevision/wiki/Like)
 
 ### API 명세서
 
-ㅇㅇ
+[구글 시트 링크](https://docs.google.com/spreadsheets/d/1318_gci9f5wuR6dzapmkYWWgj8JPeouxcDEWzubpBvA/edit?gid=0#gid=0)
 
 ### ERD
 
-dd
+<details>
+<summary> ERD </summary>
+<div markdown="1">
+
+<img src = "https://github.com/HifumiAlice/TodoRevision/blob/dev/memo/images/Todo%EB%B3%B5%EC%8A%B5.png" alt = "에러" >
+
+</div>
+</details>
+
 
 
 
