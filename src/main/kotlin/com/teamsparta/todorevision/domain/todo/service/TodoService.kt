@@ -10,6 +10,8 @@ import com.teamsparta.todorevision.domain.todo.dto.response.TodoResponse
 import com.teamsparta.todorevision.domain.todo.dto.response.TodoWithCommentsResponse
 import com.teamsparta.todorevision.domain.todo.model.Todo
 import com.teamsparta.todorevision.domain.todo.repository.TodoRepository
+import com.teamsparta.todorevision.infra.exception.ModelNotFoundException
+import com.teamsparta.todorevision.infra.exception.UnAuthorizeException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -46,7 +48,7 @@ class TodoService(
     fun getTodoById(todoId: Long, memberId: Long?): TodoWithCommentsResponse {
 
         val todo: Todo =
-            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("todo가 존재하지 않습니다. ${todoId}")
+            todoRepository.findByIdOrNull(todoId) ?: throw ModelNotFoundException("Todo", todoId)
 
         if (memberId == null) {
             return todo.toWithCommentsResponse(false)
@@ -89,14 +91,14 @@ class TodoService(
     fun updateTodo(todoId: Long, request: TodoUpdateRequest, memberId: Long): TodoResponse {
 
         val todo: Todo =
-            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시글이 존재하지 않습니다. ${todoId}")
+            todoRepository.findByIdOrNull(todoId) ?: throw ModelNotFoundException("Todo", todoId)
 
         if (!checkMyTodo(todo.getMember().getId()!!, memberId)) {
-            throw IllegalArgumentException("자신의 게시글이 아닙니다. 수정할 수 업습니다.")
+            throw UnAuthorizeException("자신의 게시글이 아닙니다. 수정할 수 업습니다.")
         }
 
         if (todo.getDone()) {
-            throw IllegalArgumentException("이미 완료된 할 일입니다. 수정할 수 없습니다.")
+            throw IllegalStateException("이미 완료된 할 일입니다. 수정할 수 없습니다.")
         }
 
         checkTitleAndContent(request.title, request.content)
@@ -109,10 +111,10 @@ class TodoService(
     fun updateTodoDone(todoId: Long, memberId: Long): TodoResponse {
 
         val todo: Todo =
-            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시글이 존재하지 않습니다. ${todoId}")
+            todoRepository.findByIdOrNull(todoId) ?: throw ModelNotFoundException("Todo", todoId)
 
         if (!checkMyTodo(todo.getMember().getId()!!, memberId)) {
-            throw IllegalArgumentException("자신의 게시글이 아닙니다. 수정할 수 업습니다.")
+            throw UnAuthorizeException("자신의 게시글이 아닙니다. 수정할 수 업습니다.")
         }
 
 
@@ -126,10 +128,10 @@ class TodoService(
     fun deleteTodo(todoId: Long, memberId: Long): Unit {
 
         val todo: Todo =
-            todoRepository.findByIdOrNull(todoId) ?: throw IllegalArgumentException("게시글이 존재하지 않습니다. ${todoId}")
+            todoRepository.findByIdOrNull(todoId) ?: throw ModelNotFoundException("Todo", todoId)
 
         if (!checkMyTodo(todo.getMember().getId()!!, memberId)) {
-            throw IllegalArgumentException("자신의 게시글이 아닙니다. 삭제할 수 없습니다..")
+            throw UnAuthorizeException("자신의 게시글이 아닙니다. 삭제할 수 없습니다.")
         }
 
 
@@ -144,7 +146,7 @@ class TodoService(
     private fun checkMyTodo(todoMemberId: Long, memberId: Long): Boolean {
 
         val member: Member =
-            memberRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("멤버가 존재하지 않습니다. ${memberId}")
+            memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException("Member", memberId)
 
         return todoMemberId == member.getId()
     }
