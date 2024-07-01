@@ -13,15 +13,16 @@ class Member(
     private var password: String,
 
     @Embedded
-    private val profile: Profile
-) {
+    private val profile: Profile,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private var id: Long? = null
+    private var id: Long? = null,
 
     @Column(name = "role", nullable = false)
     private var role: String = "USER"
+
+) {
 
     fun getEmail(): String = email
     fun getProfile(): Profile = profile
@@ -31,7 +32,7 @@ class Member(
 
     fun toResponse(): MemberResponse {
         return MemberResponse(
-            memberId = id!!,
+            memberId = id ?: 1L,
             nickname = profile.getNickname()
         )
     }

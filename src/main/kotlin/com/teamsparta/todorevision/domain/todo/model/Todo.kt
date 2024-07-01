@@ -29,13 +29,13 @@ class Todo(
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [(CascadeType.ALL)], orphanRemoval = true)
     @JoinColumn(name = "todo_id", nullable = false)
-    private val comments: MutableList<Comment> = mutableListOf()
+    private val comments: MutableList<Comment> = mutableListOf(),
 
-) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Long? = null
 
+) {
 
     fun getId(): Long? = this.id
     fun getTitle(): String = this.title
@@ -47,7 +47,7 @@ class Todo(
 
     fun toResponse(liked: Boolean): TodoResponse {
         return TodoResponse(
-            id = id!!,
+            id = id ?: 1L,
             title = title,
             content = content,
             createdAt = createdAt,
